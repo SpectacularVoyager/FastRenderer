@@ -29,8 +29,8 @@ public:
 	ShaderProgram(std::string vs,std::string fs):
 		vert(Shader(vs,GL_VERTEX_SHADER)),
 		frag(Shader(fs,GL_FRAGMENT_SHADER))
-	{
-
-	}
+	{}
 	void compile();
+	void setFloat(char* name,float val);
+	int getLocation(char* name);
 };

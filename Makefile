@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall
 LDFLAGS = -pthread -lglfw -lGLU -lGL -lGLEW
 
-INCDIR = -I/usr/include
+INCDIR = -I/usr/include -Ilib/
 LIBDIR = -L/usr/lib
 
 SRC = $(shell find -wholename "./src/*.cpp")
@@ -20,7 +20,7 @@ $(OUT): $(OBJ)
 clean:
 	@rm -f $(OBJ) $(OUT)
 
-run:$(OUT)
+run: clean $(OUT)
 	@$(OUT)
 
 .PHONY: clean

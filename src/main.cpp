@@ -3,6 +3,10 @@
 #include <iostream>
 #include "Shaders/ShaderProgram.h"
 #include "Buffer/Buffer.h"
+#include "Textures/Texture.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 void processInput(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE))
@@ -34,14 +38,14 @@ int main(void)
     // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	float vertices[] = {
-		0.5f,  0.5f, 0.0f,  // top right
-		0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left 
+		-1.0f, -1.0f, 0.0f, 0.0f , 0.0f,
+		-1.0f,  1.0f, 0.0f, 0.0f , 1.0f,
+		1.0f, -1.0f, 0.0f, 1.0f , 0.0f,
+		1.0f,  1.0f, 0.0f, 1.0f , 1.0f
 	};
 	unsigned int indices[] = {
-		0, 1, 3,
-		1, 2, 3
+		0, 2, 3,
+		0, 1, 3
 	};  
 
 
@@ -58,18 +62,21 @@ int main(void)
 
 	VertexLayout layout;
 	layout.AddEntry(GL_FLOAT,sizeof(float),3);
+	layout.AddEntry(GL_FLOAT,sizeof(float),2);
 	layout.Bind();
 
 	program.compile();
+	Texture texture(GL_TEXTURE_2D, "res/images/icon.png",GL_RGBA,GL_RGBA,4);
+	texture.Bind();
+	texture.Texture2D();
 
 
     while (!glfwWindowShouldClose(window))
     {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		processInput(window);
-        glClear(GL_COLOR_BUFFER_BIT);
 
+        glClear(GL_COLOR_BUFFER_BIT);
 		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 
         glfwSwapBuffers(window);

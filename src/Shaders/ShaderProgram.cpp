@@ -25,3 +25,11 @@ bool Shader::compile(){
 	glCompileShader(this->id);
 	return true;
 }
+
+void ShaderProgram::setFloat(char* name,float val){
+	glUniform1f(getLocation(name),val);
+}
+
+int ShaderProgram::getLocation(char* name){
+	return glGetUniformLocation(id,name);
+}

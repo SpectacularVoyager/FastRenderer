@@ -19,10 +19,15 @@ void VertexLayout::AddEntry(int type,int stride,int n){
 }
 void VertexLayout::Bind(){
 	int sum=0;
+	int width=0;
 	for(auto x:this->vec){
-		int width=x.stride*x.n;
-		glVertexAttribPointer(sum,x.n,x.type,normalized,width,NULL);
-		sum+=width;
+		width+=x.stride*x.n;
 	}
-	glEnableVertexAttribArray(0);
+	int i=0;
+	for(auto x:this->vec){
+		glVertexAttribPointer(i,x.n,x.type,normalized,width,(void*)sum);
+		sum=sum+x.stride*x.n;
+		glEnableVertexAttribArray(i);
+		i++;
+	}
 }

@@ -1,0 +1,3 @@
+CompileFlags:
+  Add: [-I/home/ankush/Ankush/OpenGL/src,[-I/home/ankush/Ankush/OpenGL/include]
+  #Add: [-Wall, -Wextra, -std=gnu99, -ffreestanding, -mfpmath=sse, -I/home/ankush/Ankush/CustomOS/src/include, -I/home/ankush/Ankush/CustomOS/src]
