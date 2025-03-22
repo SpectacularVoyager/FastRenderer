@@ -1,0 +1,26 @@
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall
+LDFLAGS = -pthread -lglfw -lGLU -lGL -lGLEW
+
+INCDIR = -I/usr/include
+LIBDIR = -L/usr/lib
+
+SRC = $(shell find -wholename "./src/*.cpp")
+
+OUT = build/prog
+
+OBJ = $(SRC:.cpp=.o)
+
+$(OUT): $(OBJ)
+	@$(CXX) $(OBJ) -o $(OUT) $(LIBDIR) $(LDFLAGS)
+
+%.o: %.cpp
+	@$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $@
+
+clean:
+	@rm -f $(OBJ) $(OUT)
+
+run:$(OUT)
+	@$(OUT)
+
+.PHONY: clean
