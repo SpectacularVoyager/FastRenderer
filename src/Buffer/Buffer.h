@@ -30,7 +30,7 @@ struct VertexLayoutEntry{
 	int type;
 	int stride;
 	int n;
-	VertexLayoutEntry(int type,int stride,int n):stride(stride),n(n),type(type){}
+	VertexLayoutEntry(int type,int stride,int n):type(type),stride(stride),n(n){}
 };
 class VertexLayout{
 	std::vector<VertexLayoutEntry> vec;

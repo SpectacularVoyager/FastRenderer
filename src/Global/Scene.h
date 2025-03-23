@@ -16,11 +16,11 @@ class Camera{
 	float aspect;
 
 	void recompute(){
-		//proj=glm::perspective(glm::radians(fov),aspect,near,far);
-		proj=glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.01f, 100.0f);
+		proj=glm::perspective(glm::radians(fov),aspect,near,far);
+		//proj=glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.01f, 100.0f);
 	}
 	public:
-	Camera(float aspect,glm::mat4 transform=glm::mat4(),float fov=45,float near=0.1,float far=1):
+	Camera(float aspect,glm::mat4 transform=glm::mat4(),float fov=45,float near=0.1,float far=100):
 		transform(transform),fov(fov),near(near),far(far),aspect(aspect)
 	{
 		recompute();
@@ -57,9 +57,18 @@ class Scene{
 	void onResize(int width, int height);
 	Camera& getCamera(){return camera;}
 	void setGlobalUniforms(ShaderProgram& program){
+
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, -glm::vec3(0.0f, 0.0f, 3.0f)); 
+
 		int proj;
 		if((proj=program.getLocation("projection"))!=-1){
 			program.setMat4f(proj,camera.getProjection());
+		}
+		
+		int v;
+		if((v=program.getLocation("view"))!=-1){
+			program.setMat4f(v,view);
 		}
 	}
 };

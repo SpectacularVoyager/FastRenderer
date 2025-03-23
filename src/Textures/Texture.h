@@ -13,7 +13,6 @@ class Texture{
 	Texture(int type,std::string file,int src_fmt,int dest_fmt,int channels):
 			type(type),src_fmt(src_fmt),dest_fmt(dest_fmt)
 	{
-		int img_channels;
 		data=stbi_load(file.c_str(),&w,&h,&channels,channels);
 		glGenTextures(1,&id);
 	}

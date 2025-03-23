@@ -18,7 +18,7 @@ void VertexLayout::AddEntry(int type,int stride,int n){
 	this->vec.push_back(VertexLayoutEntry(type,stride,n));
 }
 void VertexLayout::Bind(){
-	int sum=0;
+	long sum=0;
 	int width=0;
 	for(auto x:this->vec){
 		width+=x.stride*x.n;
