@@ -87,4 +87,14 @@ class Scene{
 			program.setVec3f(cam,camera.getPosition());
 		}
 	}
+	void PrepareFrameBufferRender(){
+		glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	void AfterFrameBufferRender(){
+        glDisable(GL_DEPTH_TEST);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		glDisable(GL_CULL_FACE);  
+	}
 };

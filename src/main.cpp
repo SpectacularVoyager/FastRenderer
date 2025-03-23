@@ -28,9 +28,15 @@
 void APIENTRY GLDebugMessageCallback(GLenum source, GLenum type, GLuint id,
     GLenum severity, GLsizei length,
     const GLchar* msg, const void* data);
+
+bool wire=false;
 void processInput(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window,true);
+	if(glfwGetKey(window,GLFW_KEY_TAB)){
+		glPolygonMode( GL_FRONT_AND_BACK, (wire)?GL_LINE:GL_FILL);
+	}
+	wire=!wire;
 }
 
 void onResize(GLFWwindow* window,int x,int y){
@@ -80,11 +86,11 @@ int main(void)
 	ShaderProgram skybox("res/shaders/skybox/vert.glsl","res/shaders/skybox/frag.glsl");
 	skybox.compile();
 
-	TextureFile texture(GL_TEXTURE_2D,GL_RGB,GL_RGB,3);
+	TextureFile texture(GL_TEXTURE_2D,GL_RGB,GL_RGB);
 	texture.Bind(2);
 	texture.loadData("res/images/proto/PNG/Dark/texture_04.png");
 	texture.defaults();
-	TextureFile textureIcon(GL_TEXTURE_2D,GL_RGBA,GL_RGBA,4);
+	TextureFile textureIcon(GL_TEXTURE_2D,GL_RGBA,GL_RGBA);
 	textureIcon.Bind(1);
 	textureIcon.loadData("res/images/icon.png");
 	texture.defaults();
@@ -125,30 +131,6 @@ int main(void)
 
 	int SCR_HEIGHT=720,SCR_WIDTH=1080;
 
-	// -------------------------
-    unsigned int framebuffer;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    // create a color attachment texture
-    unsigned int textureColorbuffer;
-    glGenTextures(1, &textureColorbuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	FrameBuffer fb(SCR_WIDTH,SCR_HEIGHT);
 	fb.Bind();
 	RenderBuffer rb;
@@ -159,13 +141,38 @@ int main(void)
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	}
 	fb.UnBind();
+	Plane floor(shader,4);
+	floor.transform*=glm::translate(glm::mat4(1.0),glm::vec3(0,-1.0,0));
+	floor.transform*=glm::scale(glm::mat4(1.0),glm::vec3(5.0));
 
     while (!glfwWindowShouldClose(window))
     {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		processInput(window);
+		rot+=glm::radians(speed);
+		fb.Bind();
+		Scene::getScene().PrepareFrameBufferRender();
+		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),0.0f,5*cos(rot));
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glDepthMask(GL_FALSE);
+		map.Bind();
+		map.Draw();
+		glDepthMask(GL_TRUE);
+
+		cube.Bind();
+		shader.setInt("Texture",2);
+		cube.Draw();
+		
+		floor.Bind();
+		floor.Draw();
+
+
+		fb.UnBind();
+		Scene::getScene().AfterFrameBufferRender();
+		fb.GetTexture().Bind(0);
+		quad.Bind();
+		quad.Draw();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -181,46 +188,6 @@ int main(void)
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-
-		rot+=glm::radians(speed);
-        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-		glEnable(GL_DEPTH_TEST);
-
-		glEnable(GL_CULL_FACE);  
-		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),0.0f,5*cos(rot));
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glDepthMask(GL_FALSE);
-		map.Bind();
-		map.Draw();
-		glDepthMask(GL_TRUE);
-
-		// shader.Use();
-		// shader.setInt("Texture",0);
-		cube.Bind();
-		shader.setInt("Texture",2);
-		cube.Draw();
-		//
-		// unlit.Use();
-		// icon.Bind();
-		// unlit.setInt("Texture",1);
-		// icon.Draw();
-		//
-		//
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-        // clear all relevant buffers
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-		glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
-		glDisable(GL_CULL_FACE);  
-		quad.Bind();
-		// texture.Bind(0);
-		// quadShader.setInt("Texture",0);
-		quad.Draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

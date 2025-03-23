@@ -16,7 +16,7 @@ class Texture{
 	int type;
 	int w,h,src_fmt,dest_fmt;
 	public:
-	Texture(int type,int src_fmt,int dest_fmt,int channels):
+	Texture(int type,int src_fmt,int dest_fmt):
 			type(type),src_fmt(src_fmt),dest_fmt(dest_fmt)
 	{
 		glGenTextures(1,&id);
@@ -26,6 +26,12 @@ class Texture{
 	}
 	void Bind(int id=0);
 	void setParam(int key,int val);
+	void setWrapAndFilter(int wraps,int wrapt,int mag,int min){
+		setParam(GL_TEXTURE_WRAP_S, wraps);
+		setParam(GL_TEXTURE_WRAP_T, wrapt);
+		setParam(GL_TEXTURE_MAG_FILTER, mag);
+		setParam(GL_TEXTURE_MIN_FILTER, min);
+	}
 
 	unsigned int GetID(){
 		return id;
@@ -35,8 +41,8 @@ class TextureFile:public Texture{
 	void* data=NULL;
 public:
 
-	TextureFile(int type,int src_fmt,int dest_fmt,int channels):
-		Texture(type,src_fmt,dest_fmt,channels)
+	TextureFile(int type,int src_fmt,int dest_fmt):
+		Texture(type,src_fmt,dest_fmt)
 	{
 	}
 	void loadData(std::string file){
