@@ -26,10 +26,21 @@ bool Shader::compile(){
 	return true;
 }
 
-void ShaderProgram::setFloat(char* name,float val){
-	glUniform1f(getLocation(name),val);
+void ShaderProgram::setFloat(std::string name,float val){
+	int loc=getLocation(name);
+	if(loc==-1)return;
+	glUniform1f(loc,val);
 }
 
-int ShaderProgram::getLocation(char* name){
-	return glGetUniformLocation(id,name);
+int ShaderProgram::getLocation(std::string name){
+	return glGetUniformLocation(id,name.c_str());
+}
+
+void ShaderProgram::setMat4f(std::string name,glm::mat4& matrix,int transpose){
+	int loc=getLocation(name);
+	if(loc==-1)return;
+	glUniformMatrix4fv(loc,1,transpose,glm::value_ptr(matrix));
+}
+void ShaderProgram::setMat4f(int loc,glm::mat4& matrix,int transpose){
+	glUniformMatrix4fv(loc,1,transpose,glm::value_ptr(matrix));
 }

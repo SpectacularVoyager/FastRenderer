@@ -1,9 +1,12 @@
 #pragma once
 
 #include <fstream>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <iostream>
 #include "string"
 #include "GL/glew.h"
+#include "glm/glm.hpp"
+#include "glm/ext.hpp"
 class Shader{
 	GLenum type;
 	std::string source;
@@ -31,6 +34,9 @@ public:
 		frag(Shader(fs,GL_FRAGMENT_SHADER))
 	{}
 	void compile();
-	void setFloat(char* name,float val);
-	int getLocation(char* name);
+	void setFloat(std::string,float val);
+	void setMat4f(std::string,glm::mat4& matrix,int transpose=GL_FALSE);
+	void setMat4f(int loc,glm::mat4& matrix,int transpose=GL_FALSE);
+
+	int getLocation(std::string name);
 };

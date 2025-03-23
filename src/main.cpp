@@ -1,9 +1,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "Shaders/ShaderProgram.h"
 #include "Buffer/Buffer.h"
 #include "Textures/Texture.h"
+
+#include "Global/Scene.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -13,6 +18,9 @@ void processInput(GLFWwindow* window){
 		glfwSetWindowShouldClose(window,true);
 }
 
+void onResize(GLFWwindow* window,int x,int y){
+	Scene::getScene().onResize(x,y);
+}
 int main(void)
 {
     GLFWwindow* window;
@@ -20,7 +28,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(Scene::getScene().getWidth(), Scene::getScene().getHeight(), "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -33,9 +41,12 @@ int main(void)
 		std::cout<<"COULD NOT INIT GLEW\n";
 	}
     glEnable(GL_DEBUG_OUTPUT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable( GL_BLEND );
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwSetWindowSizeCallback(window, onResize);
 
 	float vertices[] = {
 		-1.0f, -1.0f, 0.0f, 0.0f , 0.0f,
@@ -47,7 +58,6 @@ int main(void)
 		0, 2, 3,
 		0, 1, 3
 	};  
-
 
 	VertexArray array;
 	array.Bind();
@@ -66,7 +76,8 @@ int main(void)
 	layout.Bind();
 
 	program.compile();
-	Texture texture(GL_TEXTURE_2D, "res/images/icon.png",GL_RGBA,GL_RGBA,4);
+	Texture texture(GL_TEXTURE_2D, "res/images/brick.jpg",GL_RGB,GL_RGB,3);
+	//Texture texture(GL_TEXTURE_2D, "res/images/icon.png",GL_RGBA,GL_RGBA,4);
 	texture.Bind();
 	texture.Texture2D();
 
@@ -75,6 +86,18 @@ int main(void)
     {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		processInput(window);
+		Scene::getScene().setGlobalUniforms(program);
+
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+		glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)1920/(float)1080, 0.1f, 100.0f);
+
+		glm::mat4 view = glm::mat4(1.0f);
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+
+		program.setMat4f("projection",proj);
+		program.setMat4f("model",model);
+		program.setMat4f("view",view);
 
         glClear(GL_COLOR_BUFFER_BIT);
 		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
