@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -O3
 LDFLAGS = -pthread -lglfw -lGLU -lGL -lGLEW
 
 INCDIR = -I/usr/include -Ilib/ -Iinclude/imgui -Isrc/
@@ -10,7 +10,6 @@ SRC = $(shell find -wholename "*.cpp")
 OUT = build/prog
 
 OBJ = $(SRC:.cpp=.o)
-vpath %.cpp src
 
 $(OUT): $(OBJ)
 	@$(CXX) $(OBJ) -o $(OUT) $(LIBDIR) $(LDFLAGS)

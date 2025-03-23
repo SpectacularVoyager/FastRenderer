@@ -54,8 +54,8 @@ static float cubeVertices[] = {
 static float quadVertices[] = {
 	-1.0f, -1.0f, 0.0f, 0.0f , 0.0f,
 	-1.0f,  1.0f, 0.0f, 0.0f , 1.0f,
-	1.0f, -1.0f, 0.0f, 1.0f , 0.0f,
-	1.0f,  1.0f, 0.0f, 1.0f , 1.0f
+	1.0f, -1.0f, -0.0f, 1.0f , 0.0f,
+	1.0f,  1.0f, -0.0f, 1.0f , 1.0f
 };
 static unsigned int quadIndices[] = {
 	0, 3, 2,
@@ -109,7 +109,8 @@ class Icon{
 		vertBuffer.Bind();
 		indexBuffer.Bind();
 		layout.Bind();
-		shader.setMat4f("model",this->transform);
+		if(shader.getLocation("model")!=-1)
+			shader.setMat4f("model",this->transform);
 	}
 	void Draw(){
 		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,NULL);
