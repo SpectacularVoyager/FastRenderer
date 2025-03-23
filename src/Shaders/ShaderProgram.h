@@ -45,6 +45,8 @@ public:
 	void setFloat(std::string,float val);
 	void setInt(std::string,int val);
 	void setInt(int loc,int val);
+	void setVec3f(std::string,glm::vec3 vec);
+	void setVec3f(int loc,glm::vec3& vec);
 	void setMat4f(std::string,glm::mat4& matrix,int transpose=GL_FALSE);
 	void setMat4f(int loc,glm::mat4& matrix,int transpose=GL_FALSE);
 	void Use(){

@@ -1,3 +1,7 @@
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/detail/qualifier.hpp>
@@ -96,13 +100,37 @@ int main(void)
 	CubeMapTexture skyboxTexture({"right.jpg","left.jpg","top.jpg","bottom.jpg","front.jpg","back.jpg"},"res/images/skybox/");
 	skyboxTexture.Bind();
 	float rot=0;
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+    ImGui_ImplOpenGL3_Init("#version 330");
+	float speed=.5;
     while (!glfwWindowShouldClose(window))
     {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		processInput(window);
 
-		rot+=glm::radians(0.3);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+
+		{
+			ImGui::Begin("Render Stats");
+			ImGui::Text("Time: %.3f ms | %.1f FPS", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::SliderFloat("speed", &speed, 0.0f, 0.5f);
+			ImGui::End();
+		}
+		rot+=glm::radians(speed);
 
 		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),0.0f,5*cos(rot));
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -124,10 +152,16 @@ int main(void)
 		//
 		// icon2.Bind();
 		// icon2.Draw();
+		//
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;

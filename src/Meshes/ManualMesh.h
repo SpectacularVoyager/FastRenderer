@@ -76,6 +76,7 @@ class Cube{
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
 	}
 	void Bind(){
+		// std::cout<<__FILE__<<__LINE__<<std::endl;
 		shader.Use();
 		Scene::getScene().setGlobalUniforms(shader);
 		vertBuffer.Bind();

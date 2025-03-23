@@ -2,3 +2,5 @@ out/*
 build/*
 res/images/*
 *.o
+include/imgui/*
+imgui.ini

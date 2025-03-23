@@ -79,5 +79,12 @@ class Scene{
 		if((view=program.getLocation("view"))!=-1){
 			program.setMat4f(view,cameraTransform);
 		}
+		// std::cout<<__FILE__<<__LINE__<<std::endl;
+		int cam;
+		if((cam=program.getLocation("cameraPos"))!=-1){
+			// std::cout<<cam;
+			glm::vec3 _v(1.0);
+			program.setVec3f(cam,camera.getPosition());
+		}
 	}
 };

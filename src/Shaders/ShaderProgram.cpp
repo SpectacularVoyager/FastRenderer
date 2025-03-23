@@ -1,4 +1,5 @@
 #include "ShaderProgram.h"
+#include <glm/gtc/type_ptr.hpp>
 
 void ShaderProgram::compile(){
 	this->vert.compile();
@@ -32,7 +33,8 @@ void ShaderProgram::setFloat(std::string name,float val){
 }
 
 int ShaderProgram::getLocation(std::string name){
-	return glGetUniformLocation(id,name.c_str());
+	int loc= glGetUniformLocation(id,name.c_str());
+	return loc;
 }
 
 void ShaderProgram::setMat4f(std::string name,glm::mat4& matrix,int transpose){
@@ -51,4 +53,12 @@ void ShaderProgram::setInt(std::string name,int val){
 }
 void ShaderProgram::setInt(int loc,int val){
 	glUniform1i(loc,val);
+}
+void ShaderProgram::setVec3f(std::string name,glm::vec3 vec){
+	int loc=getLocation(name);
+	if(loc==-1)return;
+	glUniform3fv(loc,1,glm::value_ptr(vec));
+}
+void ShaderProgram::setVec3f(int loc,glm::vec3& vec){
+	glUniform3fv(loc,1,glm::value_ptr(vec));
 }
