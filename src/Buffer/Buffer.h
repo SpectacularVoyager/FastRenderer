@@ -18,6 +18,9 @@ public:
 	}
 	void Data(void* data,int size);
 	void Bind();
+	~Buffer(){
+		glDeleteBuffers(1,&id);
+	}
 };
 
 class VertexArray{

@@ -2,7 +2,13 @@
 
 #include "../stb_image.h"
 #include "GL/glew.h"
+#include <glm/ext/matrix_float4x4.hpp>
+#include <ostream>
 #include <string>
+#include <vector>
+#include "../Shaders/ShaderProgram.h"
+#include "../Buffer/Buffer.h"
+#include "../Global/Scene.h"
 
 class Texture{
 	unsigned int id;
@@ -18,16 +24,117 @@ class Texture{
 	}
 	~Texture(){
 		stbi_image_free(data);
+		glDeleteTextures(1,&id);
 	}
 	void Bind(int id=0);
 	void setParam(int key,int val);
-	void Texture2D(){
+	void Texture2D(int _type){
 		setParam(GL_TEXTURE_WRAP_S, GL_REPEAT);
 		setParam(GL_TEXTURE_WRAP_T, GL_REPEAT);
 		setParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		setParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexImage2D(type, 0, dest_fmt, w, h, 0, src_fmt, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(_type, 0, dest_fmt, w, h, 0, src_fmt, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(type);
 	}
 
+};
+static float skyboxVertices[] = {
+    // positions          
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
+};
+class CubeMapTexture{
+	unsigned int id;
+	public:
+	CubeMapTexture(std::vector<std::string> files,std::string prefix=""){
+		glGenTextures(1, &id);
+
+		int width, height, nrChannels;
+		unsigned char *data;  
+		for(unsigned int i = 0; i < files.size(); i++)
+		{
+			std::string f=prefix+files[i];
+			data = stbi_load(f.c_str(), &width, &height, &nrChannels, 0);
+			if(data==NULL){return;}
+			glTexImage2D(
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+					0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+					);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
+	}
+	void Bind(){
+		glBindTexture(GL_TEXTURE_CUBE_MAP, id);
+	}
+};
+class CubeMap{
+	ShaderProgram shader;
+	Buffer vertBuffer;
+	VertexLayout layout;
+	public:
+	glm::mat4 transform;
+	CubeMap(ShaderProgram& program):
+		shader(program),transform(glm::mat4(1.0f))
+	{
+		this->vertBuffer=Buffer(GL_ARRAY_BUFFER,skyboxVertices,sizeof(skyboxVertices));
+		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+	}
+	void Bind(){
+		shader.Use();
+
+		glm::mat4 view=Scene::getScene().getCamera().getTransform();
+		view=glm::mat4(glm::mat3(view));
+		shader.setMat4f("view",view);
+		shader.setMat4f("projection",Scene::getScene().getCamera().getProjection());
+		//Scene::getScene().setGlobalUniforms(shader);
+		vertBuffer.Bind();
+		layout.Bind();
+		//shader.setMat4f("model",this->transform);
+	}
+	void Draw(){
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
 };

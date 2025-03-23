@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <fstream>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <iostream>
@@ -15,6 +16,10 @@ public:
 	unsigned int id;
 	Shader(std::string file,GLenum type):type(type){
 		std::ifstream stream(file);
+		if(!std::filesystem::exists(file)){
+			std::cout<<"FILE: ["<<file<<"] DOES NOT EXIST\n";
+			return;
+		}
 		while(!stream.eof()){
 			std::string line;
 
@@ -33,8 +38,13 @@ public:
 		vert(Shader(vs,GL_VERTEX_SHADER)),
 		frag(Shader(fs,GL_FRAGMENT_SHADER))
 	{}
+	~ShaderProgram(){
+		glDeleteProgram(id);
+	}
 	void compile();
 	void setFloat(std::string,float val);
+	void setInt(std::string,int val);
+	void setInt(int loc,int val);
 	void setMat4f(std::string,glm::mat4& matrix,int transpose=GL_FALSE);
 	void setMat4f(int loc,glm::mat4& matrix,int transpose=GL_FALSE);
 	void Use(){

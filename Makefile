@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++17 -Wall
 LDFLAGS = -pthread -lglfw -lGLU -lGL -lGLEW
 
 INCDIR = -I/usr/include -Ilib/
@@ -21,6 +21,9 @@ clean:
 	@rm -f $(OBJ) $(OUT)
 
 run: clean $(OUT)
+	@$(OUT)
+
+r:
 	@$(OUT)
 
 .PHONY: clean

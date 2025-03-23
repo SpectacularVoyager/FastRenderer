@@ -43,3 +43,12 @@ void ShaderProgram::setMat4f(std::string name,glm::mat4& matrix,int transpose){
 void ShaderProgram::setMat4f(int loc,glm::mat4& matrix,int transpose){
 	glUniformMatrix4fv(loc,1,transpose,glm::value_ptr(matrix));
 }
+
+void ShaderProgram::setInt(std::string name,int val){
+	int loc=getLocation(name);
+	if(loc==-1)return;
+	glUniform1i(loc,val);
+}
+void ShaderProgram::setInt(int loc,int val){
+	glUniform1i(loc,val);
+}
