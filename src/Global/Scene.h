@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/vector_float3.hpp>
@@ -17,6 +19,7 @@ class Camera{
 
 	void recompute(){
 		proj=glm::perspective(glm::radians(fov),aspect,near,far);
+		//std::cout<<aspect<<std::endl;
 		//proj=glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.01f, 100.0f);
 	}
 	public:
@@ -45,7 +48,7 @@ class Scene{
 	public:
 	static Scene& getScene()
 	{
-		static Scene instance(1920,1080);
+		static Scene instance(1080,720);
 		return instance;
 	}
 	public:
@@ -58,8 +61,11 @@ class Scene{
 	Camera& getCamera(){return camera;}
 	void setGlobalUniforms(ShaderProgram& program){
 
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, -glm::vec3(0.0f, 0.0f, 3.0f)); 
+		glm::mat4 _view=glm::lookAt(
+				-glm::vec3(0.0f,0.0f,3.0f), 
+				glm::vec3(0.0f,0.0f,1.0f), 
+				glm::vec3(0.0f,1.0f,0.0f)
+				);
 
 		int proj;
 		if((proj=program.getLocation("projection"))!=-1){
@@ -68,7 +74,7 @@ class Scene{
 		
 		int v;
 		if((v=program.getLocation("view"))!=-1){
-			program.setMat4f(v,view);
+			program.setMat4f(v,_view);
 		}
 	}
 };

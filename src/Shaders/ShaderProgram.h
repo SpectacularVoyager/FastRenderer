@@ -37,6 +37,9 @@ public:
 	void setFloat(std::string,float val);
 	void setMat4f(std::string,glm::mat4& matrix,int transpose=GL_FALSE);
 	void setMat4f(int loc,glm::mat4& matrix,int transpose=GL_FALSE);
+	void Use(){
+		glUseProgram(this->id);
+	}
 
 	int getLocation(std::string name);
 };

@@ -22,10 +22,10 @@ class Texture{
 	void Bind(int id=0);
 	void setParam(int key,int val);
 	void Texture2D(){
-		setParam(GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		setParam(GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		setParam(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		setParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		setParam(GL_TEXTURE_WRAP_S, GL_REPEAT);
+		setParam(GL_TEXTURE_WRAP_T, GL_REPEAT);
+		setParam(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		setParam(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexImage2D(type, 0, dest_fmt, w, h, 0, src_fmt, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(type);
 	}

@@ -14,7 +14,6 @@ void ShaderProgram::compile(){
 		glGetProgramInfoLog(this->id, 512, NULL, infoLog);
 		std::cout<<"ERROR\n"<<infoLog<<"\n";
 	}
-	glUseProgram(this->id);
 	glDeleteShader(this->vert.id);
 	glDeleteShader(this->frag.id);
 }
