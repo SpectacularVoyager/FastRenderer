@@ -2,10 +2,10 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall
 LDFLAGS = -pthread -lglfw -lGLU -lGL -lGLEW
 
-INCDIR = -I/usr/include -Ilib/
+INCDIR = -I/usr/include -Ilib/ -Iinclude/imgui -Isrc/
 LIBDIR = -L/usr/lib
 
-SRC = $(shell find -wholename "./src/*.cpp")
+SRC = $(shell find -wholename "*.cpp")
 
 OUT = build/prog
 

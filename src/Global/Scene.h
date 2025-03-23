@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/trigonometric.hpp>
 
-#include "../Shaders/ShaderProgram.h"
+#include "Shaders/ShaderProgram.h"
 class Camera{
 	glm::mat4 proj;
 	float fov=45;

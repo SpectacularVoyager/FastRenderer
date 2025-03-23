@@ -3,9 +3,9 @@
 #include <glm/ext/matrix_float4x4.hpp>
 
 
-#include "../Shaders/ShaderProgram.h"
-#include "../Buffer/Buffer.h"
-#include "../Global/Scene.h"
+#include "Shaders/ShaderProgram.h"
+#include "Buffer/Buffer.h"
+#include "Global/Scene.h"
 
 static float cubeVertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,	0.0,0.0,-1.0f,

@@ -6,9 +6,9 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include "../Shaders/ShaderProgram.h"
-#include "../Buffer/Buffer.h"
-#include "../Global/Scene.h"
+#include "Shaders/ShaderProgram.h"
+#include "Buffer/Buffer.h"
+#include "Global/Scene.h"
 
 class Texture{
 	unsigned int id;
