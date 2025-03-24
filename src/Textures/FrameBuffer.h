@@ -5,13 +5,13 @@ class FrameBuffer{
 	unsigned int id;
 	TextureFile texture;
 public:
-	FrameBuffer(int w,int h,int type=GL_RGB,int fbtype=GL_COLOR_ATTACHMENT0):
+	FrameBuffer(int w,int h,int type=GL_RGB,int fbtype=GL_COLOR_ATTACHMENT0,int data_type=GL_UNSIGNED_INT):
 		texture(TextureFile(GL_TEXTURE_2D,type,type))
 	{
 		glGenFramebuffers(1, &id);
 		Bind();
 		texture.Bind();
-		texture.Texture2D(NULL, w, h);
+		texture.Texture2D(NULL, w, h,data_type);
 		texture.setParam(GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 		texture.setParam(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, fbtype, GL_TEXTURE_2D, texture.GetID(), 0);

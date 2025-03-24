@@ -45,15 +45,15 @@ public:
 		Texture(type,src_fmt,dest_fmt)
 	{
 	}
-	void loadData(std::string file){
+	void loadData(std::string file,int data_type=GL_UNSIGNED_BYTE){
 		int channels;
 		data=stbi_load(file.c_str(),&w,&h,&channels,3);
-		glTexImage2D(GL_TEXTURE_2D, 0, dest_fmt, w, h, 0, src_fmt, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, dest_fmt, w, h, 0, src_fmt,data_type, data);
 	}
-	void Texture2D(void* data,int w,int h){
+	void Texture2D(void* data,int w,int h,int data_type){
 		this->w=w;
 		this->h=h;
-		glTexImage2D(GL_TEXTURE_2D, 0, dest_fmt, w, h, 0, src_fmt, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, dest_fmt, w, h, 0, src_fmt, data_type, data);
 	}
 	~TextureFile(){
 		if(data!=NULL)
