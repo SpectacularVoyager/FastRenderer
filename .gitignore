@@ -2,6 +2,7 @@ out/*
 build/*
 res/images/*
 *.o
+*.a
 imgui.ini
 CMakeFiles/*
 CMakeCache.txt
