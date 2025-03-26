@@ -154,8 +154,8 @@ int main(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		processInput(window);
 		rot-=glm::radians(speed);
-		//fb.Bind();
-		//Scene::getScene().PrepareFrameBufferRender();
+		fb.Bind();
+		Scene::getScene().PrepareFrameBufferRender();
 		// glViewport(0, 0, 1024, 1024);
 		// shadow.Bind();
 		// glClear(GL_DEPTH_BUFFER_BIT);
@@ -175,11 +175,12 @@ int main(void)
 		floor.Draw();
 		// shadow.UnBind();
 		//
-		// // fb.UnBind();
-		// // Scene::getScene().AfterFrameBufferRender();
+		fb.UnBind();
+		Scene::getScene().AfterFrameBufferRender();
+		fb.GetTexture().Bind(0);
 		// shadow.GetTexture().Bind(0);
-		// quad.Bind();
-		// quad.Draw();
+		quad.Bind();
+		quad.Draw();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
