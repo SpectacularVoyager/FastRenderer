@@ -5,7 +5,7 @@ in vec2 tex;
 in vec3 pos;
 uniform sampler2D Texture;
 float near = 0.1; 
-float far  = 20.0; 
+float far  = 100.0; 
   
 float LinearizeDepth(float depth) 
 {
@@ -16,5 +16,5 @@ float LinearizeDepth(float depth)
 void main()
 {
 	float r=texture(Texture,tex).r;
-	FragColor=vec4(vec3(LinearizeDepth(r)),1.0);
+	FragColor=vec4(vec3(pow(r,4)),1.0);
 } 

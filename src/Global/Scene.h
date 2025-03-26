@@ -26,7 +26,7 @@ class Camera{
 		//proj=glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.01f, 100.0f);
 	}
 	public:
-	Camera(float aspect,float fov=45,float near=0.1,float far=20):
+	Camera(float aspect,float fov=45,float near=0.1,float far=100):
 		fov(fov),near(near),far(far),aspect(aspect)
 	{
 		position=glm::vec3(0.0f,0.0f,3.0f);

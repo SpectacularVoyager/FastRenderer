@@ -20,8 +20,8 @@ void Renderer::RenderShadow(){
 }
 
 void Renderer::RenderToFB(){
-	fb.Bind();
-	Scene::getScene().PrepareFrameBufferRender();
+	/*fb.Bind();*/
+	/*Scene::getScene().PrepareFrameBufferRender();*/
 	for(Renderable* r:objects){
 		r->Bind();
 		ShaderProgram& shader=r->GetShader();
@@ -31,10 +31,10 @@ void Renderer::RenderToFB(){
 		shader.setMat4f("model",r->getTransform());
 		r->Draw();
 	}
-	fb.UnBind();
-	Scene::getScene().AfterFrameBufferRender();
-	fb.GetTexture().Bind(0);
-	RenderScreenQuad();
+	/*fb.UnBind();*/
+	/*Scene::getScene().AfterFrameBufferRender();*/
+	/*fb.GetTexture().Bind(0);*/
+	/*RenderScreenQuad();*/
 }
 void Renderer::RenderImGUI(ImGuiIO& io){
 

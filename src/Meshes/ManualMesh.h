@@ -300,6 +300,8 @@ class Icon{
 		layout.Bind();
 		if(shader.getLocation("model")!=-1)
 			shader.setMat4f("model",this->transform);
+
+		shader.setInt("Texture",0);
 	}
 	void Draw(){
 		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,NULL);

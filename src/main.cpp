@@ -70,8 +70,8 @@ int main(void)
 	glDepthFunc(GL_LESS);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glEnable(GL_MULTISAMPLE);  
-	glEnable(GL_CULL_FACE);  
-	glCullFace(GL_BACK);  
+	/*glEnable(GL_CULL_FACE);  */
+	/*glCullFace(GL_BACK);  */
     glDebugMessageCallback(GLDebugMessageCallback, NULL);
 
     // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -138,6 +138,32 @@ int main(void)
 	RenderableCube rc(shader);
 	renderer.Add(&rc);
 	renderer.Add(&floor);
+
+
+    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    unsigned int depthMapFBO;
+    glGenFramebuffers(1, &depthMapFBO);
+	FrameBuffer shadow(SHADOW_WIDTH,SHADOW_HEIGHT,GL_DEPTH_COMPONENT,GL_DEPTH_ATTACHMENT,GL_FLOAT);
+	shadow.GetTexture().setWrapAndFilter(GL_REPEAT,GL_REPEAT,GL_NEAREST,GL_NEAREST);
+	
+    // create depth texture
+    unsigned int depthMap;
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // attach depth texture as FBO's depth buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+
     while (!glfwWindowShouldClose(window))
     {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -150,7 +176,16 @@ int main(void)
 		/*map.Bind();*/
 		/*map.Draw();*/
 		/*glDepthMask(GL_TRUE);*/
+		//quadShader.setInt("Texture",0);
+		glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
 		renderer.Loop();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, depthMap);
+		renderer.RenderScreenQuad();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
