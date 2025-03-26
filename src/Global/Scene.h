@@ -84,7 +84,8 @@ class Scene{
 		if((cam=program.getLocation("cameraPos"))!=-1){
 			// std::cout<<cam;
 			glm::vec3 _v(1.0);
-			program.setVec3f(cam,camera.getPosition());
+			glm::vec3 camPos=-camera.getPosition();
+			program.setVec3f(cam,camPos);
 		}
 	}
 	void PrepareFrameBufferRender(){

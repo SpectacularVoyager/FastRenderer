@@ -6,6 +6,7 @@
 #include <GL/glext.h>
 #include <GLFW/glfw3.h>
 #include <glm/detail/qualifier.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/quaternion_transform.hpp>
 #include <glm/trigonometric.hpp>
@@ -145,7 +146,8 @@ int main(void)
 	shadow.UnBind();
 	Plane floor(shader,8);
 	floor.transform*=glm::translate(glm::mat4(1.0),glm::vec3(0,-1.0,0));
-	floor.transform*=glm::scale(glm::mat4(1.0),glm::vec3(5.0));
+	floor.transform*=glm::scale(glm::mat4(1.0),glm::vec3(10.0));
+	Scene::getScene().getCamera().getPosition()+=glm::vec3(0,5,0);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -157,12 +159,12 @@ int main(void)
 		// glViewport(0, 0, 1024, 1024);
 		// shadow.Bind();
 		// glClear(GL_DEPTH_BUFFER_BIT);
-		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),0.0f,5*cos(rot));
+		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),-1,5*cos(rot));
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDepthMask(GL_FALSE);
-		map.Bind();
-		map.Draw();
+		/*map.Bind();*/
+		/*map.Draw();*/
 		glDepthMask(GL_TRUE);
 
 		cube.Bind();

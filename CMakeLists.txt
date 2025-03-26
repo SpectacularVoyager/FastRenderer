@@ -29,3 +29,8 @@ target_include_directories(project PRIVATE src)
 # FIND_PACKAGE( OpenCV REQUIRED )                              
 # INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 # TARGET_LINK_LIBRARIES (project ${OpenCV_LIBS})         
+
+### dependencies
+#	sudo apt-get install libglfw3-dev
+#	sudo apt-get install libglew-dev
+#	sudo apt install libglm-dev
