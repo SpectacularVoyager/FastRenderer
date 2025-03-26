@@ -4,8 +4,17 @@ out vec4 FragColor;
 in vec2 tex;
 in vec3 pos;
 uniform sampler2D Texture;
+float near = 0.1; 
+float far  = 20.0; 
+  
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // back to NDC 
+    return (2.0 * near * far) / (far + near - z * (far - near));	
+}
 
 void main()
 {
-    FragColor = vec4(vec3(texture(Texture, tex)),1.0);
+	float r=texture(Texture,tex).r;
+	FragColor=vec4(vec3(LinearizeDepth(r)),1.0);
 } 

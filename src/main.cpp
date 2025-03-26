@@ -1,3 +1,4 @@
+#include "Renderer/Renderer.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -127,60 +128,29 @@ int main(void)
 	float speed=.5;
 
 	int SCR_HEIGHT=720,SCR_WIDTH=1080;
+	Renderer renderer(quadShader);
 
-	FrameBuffer fb(SCR_WIDTH,SCR_HEIGHT);
-	fb.Bind();
-	RenderBuffer rb;
-	rb.Bind();
-	rb.Storage(GL_DEPTH24_STENCIL8,SCR_WIDTH,SCR_HEIGHT);
-	fb.AttachRenderBuffer(rb,GL_DEPTH_STENCIL_ATTACHMENT);
-    if (!fb.CheckComplete()){
-        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	}
-	fb.UnBind();
-
-	FrameBuffer shadow(1024,1024,GL_DEPTH_COMPONENT,GL_DEPTH_ATTACHMENT,GL_FLOAT);
-	shadow.GetTexture().setWrapAndFilter(GL_REPEAT,GL_REPEAT,GL_NEAREST,GL_NEAREST);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	shadow.UnBind();
 	Plane floor(shader,8);
 	floor.transform*=glm::translate(glm::mat4(1.0),glm::vec3(0,-1.0,0));
 	floor.transform*=glm::scale(glm::mat4(1.0),glm::vec3(10.0));
 	Scene::getScene().getCamera().getPosition()+=glm::vec3(0,5,0);
 
+	RenderableCube rc(shader);
+	renderer.Add(&rc);
+	renderer.Add(&floor);
     while (!glfwWindowShouldClose(window))
     {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		processInput(window);
 		rot-=glm::radians(speed);
-		fb.Bind();
-		Scene::getScene().PrepareFrameBufferRender();
-		// glViewport(0, 0, 1024, 1024);
-		// shadow.Bind();
-		// glClear(GL_DEPTH_BUFFER_BIT);
-		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),-1,5*cos(rot));
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDepthMask(GL_FALSE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Scene::getScene().getCamera().getPosition()=glm::vec3(5*sin(rot),-1,5*cos(rot));
+		/*glDepthMask(GL_FALSE);*/
 		/*map.Bind();*/
 		/*map.Draw();*/
-		glDepthMask(GL_TRUE);
-
-		cube.Bind();
-		shader.setInt("Texture",2);
-		cube.Draw();
-		
-		floor.Bind();
-		floor.Draw();
-		// shadow.UnBind();
-		//
-		fb.UnBind();
-		Scene::getScene().AfterFrameBufferRender();
-		fb.GetTexture().Bind(0);
-		// shadow.GetTexture().Bind(0);
-		quad.Bind();
-		quad.Draw();
+		/*glDepthMask(GL_TRUE);*/
+		renderer.Loop();
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -196,6 +166,7 @@ int main(void)
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -8,48 +8,49 @@
 #include "Shaders/ShaderProgram.h"
 #include "Buffer/Buffer.h"
 #include "Global/Scene.h"
+#include "Renderer/Renderable.h"
 
 static float cubeVertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,	0.0,0.0,-1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0,0.0,-1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,   0.0,0.0,-1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0,0.0,-1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,   0.0,0.0,-1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0,0.0,-1.0f,
-    // Front face                                    ,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0,0.0,1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0,0.0,1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0.0,0.0,1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,   0.0,0.0,1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,   0.0,0.0,1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0,0.0,1.0f,
-    // Left face                                     ,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   -1.0f,0.0,0.0,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   -1.0f,0.0,0.0,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   -1.0f,0.0,0.0,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   -1.0f,0.0,0.0,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   -1.0f,0.0,0.0,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   -1.0f,0.0,0.0,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f,0.0,0.0,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f,0.0,0.0,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   1.0f,0.0,0.0,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   1.0f,0.0,0.0,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   1.0f,0.0,0.0,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   1.0f,0.0,0.0,
-    // Bottom face                                   ,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0.0,-1.0f,0.0,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,   0.0,-1.0f,0.0,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0,-1.0f,0.0,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,   0.0,-1.0f,0.0,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,   0.0,-1.0f,0.0,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,   0.0,-1.0f,0.0,
-    // Top face                                      ,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0,1.0f,0.0,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0.0,1.0f,0.0,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,   0.0,1.0f,0.0,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,   0.0,1.0f,0.0,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,   0.0,1.0f,0.0,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,   0.0,1.0f,0.0,
+    -0.5f, -0.5f, -0.5f,	0.0,0.0,-1.0,  0.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,   0.0,0.0,-1.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,   0.0,0.0,-1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,   0.0,0.0,-1.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,   0.0,0.0,-1.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,   0.0,0.0,-1.0f,  0.0f, 1.0f,
+    // Front face                                    
+    -0.5f, -0.5f,  0.5f,   0.0,0.0,1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,   0.0,0.0,1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,   0.0,0.0,1.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,   0.0,0.0,1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,   0.0,0.0,1.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,   0.0,0.0,1.0f,  0.0f, 0.0f,
+    // Left face                                     
+    -0.5f,  0.5f,  0.5f,   -1.0f,0.0,0.0,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,   -1.0f,0.0,0.0,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,   -1.0f,0.0,0.0,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,   -1.0f,0.0,0.0,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,   -1.0f,0.0,0.0,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,   -1.0f,0.0,0.0,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,   1.0f,0.0,0.0,  1.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,   1.0f,0.0,0.0,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,   1.0f,0.0,0.0,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,   1.0f,0.0,0.0,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,   1.0f,0.0,0.0,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,   1.0f,0.0,0.0,  0.0f, 0.0f,
+    // Bottom face                                   
+    -0.5f, -0.5f, -0.5f,   0.0,-1.0f,0.0,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,   0.0,-1.0f,0.0,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,   0.0,-1.0f,0.0,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,   0.0,-1.0f,0.0,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,   0.0,-1.0f,0.0,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,   0.0,-1.0f,0.0,  0.0f, 1.0f,
+    // Top face                                      
+    -0.5f,  0.5f, -0.5f,   0.0,1.0f,0.0,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,   0.0,1.0f,0.0,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,   0.0,1.0f,0.0,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,   0.0,1.0f,0.0,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,   0.0,1.0f,0.0,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,   0.0,1.0f,0.0,  0.0f, 0.0f,
 };
 
 
@@ -74,8 +75,8 @@ class Cube{
 	{
 		this->vertBuffer=Buffer(GL_ARRAY_BUFFER,cubeVertices,sizeof(cubeVertices));
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
-		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 	}
 	void Bind(){
 		// std::cout<<__FILE__<<__LINE__<<std::endl;
@@ -85,20 +86,68 @@ class Cube{
 		layout.Bind();
 		shader.setMat4f("model",this->transform);
 	}
+	ShaderProgram& GetShader(){
+		return shader;
+	}
 	void Draw(){
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 };
+class RenderableObject:public Renderable{
+	protected:
+	ShaderProgram shader;
+	Buffer vertBuffer;
+	VertexLayout layout;
+	int verts=0;
+	public:
+	glm::mat4 transform;
+	RenderableObject(ShaderProgram& program):
+		shader(program),transform(glm::mat4(1.0f))
+	{
+		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+		layout.AddEntry(GL_FLOAT,sizeof(float),2);
+	}
+	void SetBuffers(void* vertices,int verts){
+		this->verts=verts;
+		this->vertBuffer=Buffer(GL_ARRAY_BUFFER,vertices,8*sizeof(float)*verts);
+	}
+	void Bind() override {
+		shader.Use();
+		Scene::getScene().setGlobalUniforms(shader);
+		vertBuffer.Bind();
+		layout.Bind();
+		shader.setMat4f("model",this->transform);
+	}
+	ShaderProgram& GetShader() override {
+		return shader;
+	}
+	void Draw() override{
+		glDrawArrays(GL_TRIANGLES, 0, verts);
+	}
+	glm::mat4& getTransform() override {
+		return this->transform;
+	}
+};
+class RenderableCube:public RenderableObject{
+	public:
+		RenderableCube(ShaderProgram& program):
+			RenderableObject(program)
+		{
+			SetBuffers(cubeVertices,36);
+		}
+};
+
 struct VertexPlane{
 	float position[3];
-	float texCoord[2];
 	float normal[3];
+	float texCoord[2];
 }__attribute__((packed));
 struct Triangle{
 	unsigned int a,b,c;
 }__attribute__((packed));
 
-class Plane{
+class Plane:public Renderable{
 	ShaderProgram shader;
 	Buffer vertBuffer;
 	Buffer indexBuffer;
@@ -141,10 +190,10 @@ class Plane{
 		this->vertBuffer=Buffer(GL_ARRAY_BUFFER,vertex.data(),sizeof(VertexPlane)*vertex.size());
 		this->indexBuffer=Buffer(GL_ELEMENT_ARRAY_BUFFER,indices.data(),sizeof(Triangle)*indices.size());
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
-		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 	}
-	void Bind(){
+	void Bind() override{
 		// std::cout<<__FILE__<<__LINE__<<std::endl;
 		shader.Use();
 		Scene::getScene().setGlobalUniforms(shader);
@@ -153,8 +202,14 @@ class Plane{
 		layout.Bind();
 		shader.setMat4f("model",this->transform);
 	}
-	void Draw(){
+	void Draw() override{
 		glDrawElements(GL_TRIANGLES,indices.size()*3,GL_UNSIGNED_INT,NULL);
+	}
+	ShaderProgram& GetShader() override {
+		return shader;
+	}
+	glm::mat4& getTransform() override {
+		return this->transform;
 	}
 };
 static void addPlane(unsigned int n,std::vector<VertexPlane>& vertex,std::vector<Triangle>& indices,glm::vec3 position){
@@ -200,12 +255,13 @@ class QuadSphere{
 	QuadSphere(ShaderProgram& program,int _n=10):
 		shader(program),transform(glm::mat4(1.0f)),n(_n+1)
 	{
+		addPlane(n,vertex,indices,{0, 1,0});
 		addPlane(n,vertex,indices,{0,-1,0});
 		this->vertBuffer=Buffer(GL_ARRAY_BUFFER,vertex.data(),sizeof(VertexPlane)*vertex.size());
 		this->indexBuffer=Buffer(GL_ELEMENT_ARRAY_BUFFER,indices.data(),sizeof(Triangle)*indices.size());
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
-		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 		layout.AddEntry(GL_FLOAT,sizeof(float),3);
+		layout.AddEntry(GL_FLOAT,sizeof(float),2);
 	}
 	void Bind(){
 		// std::cout<<__FILE__<<__LINE__<<std::endl;

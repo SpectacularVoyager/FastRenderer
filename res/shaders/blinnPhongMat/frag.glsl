@@ -7,20 +7,13 @@ in vec3 norm;
 uniform sampler2D Texture;
   
 uniform vec3 cameraPos;
-uniform vec3 sun;
-
-uniform samplerCube skybox;
 
 void main()
 {    
 	vec3 lightPos=vec3(0,2,0);
 
 	vec3 _norm=normalize(norm);
-	//POINT LIGHTS
-	//vec3 lightDir=normalize(lightPos-pos);
-
-	vec3 lightDir=sun;
-	
+	vec3 lightDir=normalize(lightPos-pos);
 	vec3 viewDir=normalize(cameraPos-pos);
 	vec3 halfway=normalize(lightDir+viewDir);
 
@@ -30,7 +23,6 @@ void main()
 	float dist=length(lightPos-pos);
 	float atten=8/(dist*dist);
 
-	//vec3 tex=texture(Texture, tex).xyz*(spec+diffuse)*atten;
-	vec3 tex=texture(Texture, tex).xyz*(spec+diffuse);
+	vec3 tex=texture(Texture, tex).xyz*(spec+diffuse)*atten;
 	FragColor=vec4(vec3(tex),1.0);
 } 

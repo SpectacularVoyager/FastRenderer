@@ -33,14 +33,13 @@ void ShaderProgram::setFloat(std::string name,float val){
 }
 
 int ShaderProgram::getLocation(std::string name){
-	int loc= glGetUniformLocation(id,name.c_str());
-	return loc;
+	return glGetUniformLocation(id,name.c_str());
 }
 
 void ShaderProgram::setMat4f(std::string name,glm::mat4& matrix,int transpose){
 	int loc=getLocation(name);
 	if(loc==-1)return;
-	glUniformMatrix4fv(loc,1,transpose,glm::value_ptr(matrix));
+	setMat4f(loc,matrix,transpose);
 }
 void ShaderProgram::setMat4f(int loc,glm::mat4& matrix,int transpose){
 	glUniformMatrix4fv(loc,1,transpose,glm::value_ptr(matrix));
@@ -49,7 +48,7 @@ void ShaderProgram::setMat4f(int loc,glm::mat4& matrix,int transpose){
 void ShaderProgram::setInt(std::string name,int val){
 	int loc=getLocation(name);
 	if(loc==-1)return;
-	glUniform1i(loc,val);
+	setInt(loc,val);
 }
 void ShaderProgram::setInt(int loc,int val){
 	glUniform1i(loc,val);
@@ -57,7 +56,7 @@ void ShaderProgram::setInt(int loc,int val){
 void ShaderProgram::setVec3f(std::string name,glm::vec3 vec){
 	int loc=getLocation(name);
 	if(loc==-1)return;
-	glUniform3fv(loc,1,glm::value_ptr(vec));
+	setVec3f(loc,vec);
 }
 void ShaderProgram::setVec3f(int loc,glm::vec3& vec){
 	glUniform3fv(loc,1,glm::value_ptr(vec));
