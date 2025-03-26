@@ -4,10 +4,11 @@ void Renderer::Add(Renderable* r){
 	objects.push_back(r);
 }
 void Renderer::Loop(){
-	RenderToFB();
+	RenderShadow();
 }
 void Renderer::RenderShadow(){
-
+	shadow.Bind();
+	glClear(GL_DEPTH_BUFFER_BIT);
 	for(Renderable* r:objects){
 		r->Bind();
 		ShaderProgram& shader=r->GetShader();
@@ -17,6 +18,13 @@ void Renderer::RenderShadow(){
 		shader.setMat4f("model",r->getTransform());
 		r->Draw();
 	}
+	shadow.UnBind();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glActiveTexture(GL_TEXTURE0);
+	shadow.GetTexture().Bind(0);
+	RenderScreenQuad();
 }
 
 void Renderer::RenderToFB(){
@@ -34,7 +42,7 @@ void Renderer::RenderToFB(){
 	/*fb.UnBind();*/
 	/*Scene::getScene().AfterFrameBufferRender();*/
 	/*fb.GetTexture().Bind(0);*/
-	/*RenderScreenQuad();*/
+	//RenderScreenQuad();
 }
 void Renderer::RenderImGUI(ImGuiIO& io){
 
