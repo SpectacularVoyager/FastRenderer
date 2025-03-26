@@ -1,6 +1,6 @@
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <GL/glew.h>
 #include <GL/glext.h>
@@ -143,7 +143,7 @@ int main(void)
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 	shadow.UnBind();
-	Plane floor(shader,4);
+	Plane floor(shader,8);
 	floor.transform*=glm::translate(glm::mat4(1.0),glm::vec3(0,-1.0,0));
 	floor.transform*=glm::scale(glm::mat4(1.0),glm::vec3(5.0));
 
@@ -151,7 +151,7 @@ int main(void)
     {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		processInput(window);
-		rot+=glm::radians(speed);
+		rot-=glm::radians(speed);
 		//fb.Bind();
 		//Scene::getScene().PrepareFrameBufferRender();
 		// glViewport(0, 0, 1024, 1024);
